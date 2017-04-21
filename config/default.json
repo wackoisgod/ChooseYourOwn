@@ -1,0 +1,6 @@
+{
+    "appSecret": "b192ff43788ed97575fd67ef9e6013bc",
+    "pageAccessToken": "EAAEOgm1mU0kBABC6DjZBXlrwas6ZAOPhxK042mUGZBRbkmcCaDZCD5ARDdAgNtJDiKlEB8tvO9A1DY2MHXJ4d051mt6rRk0ud9qxSN10x5XUJ6A4exyr2I8U4OC0AkzZADdJQCCVSPjQRI4ouZAv08A4bpAtbZApngVVyEZAZB8yZCLgZDZD",
+    "validationToken": "my_voice_is_my_password_verify_me",
+    "serverURL": "https://spring-bonfire-165221.appspot.com/webhook/"
+}
