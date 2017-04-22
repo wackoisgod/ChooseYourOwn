@@ -13,12 +13,20 @@ const states = {};
 
 const stateTree = {
 	START: {
-		message: 'You\'re in a room. You see a key next to a door. Do you pick it up or open the door?',
 		action: state => {
 			state.inventory = {
 				key: false
 			};
-		},
+
+			state.state = 'LOCKED_DOOR';
+
+			Bot.sendText(state.id, 'Welcome to AdventureBot, knave!');
+
+			return true; // Tell the game that it should immediately run the next state.
+		}
+	},
+	LOCKED_DOOR: {
+		message: 'You\'re in a room. You see a key next to a door. Do you pick it up or open the door?',
 		options: [
 			{text: 'Pick up the key', payload: 'KEY'},
 			{text: 'Open the door', payload: 'DOOR'}
@@ -26,7 +34,9 @@ const stateTree = {
 	},
 	KEY: {
 		message: 'You pick up the key.',
-		action: state => state.inventory.key = true,
+		action: state => {
+			state.inventory.key = true;
+		},
 		options: [
 			{text: 'Continue', payload: 'AFTERKEY'}
 		]
@@ -40,7 +50,7 @@ const stateTree = {
 	DOOR: {
 		message: 'The door is locked.',
 		options: [
-			{text: 'Continue', payload: 'START'},
+			{text: 'Continue', payload: 'LOCKED_DOOR'},
 			{text: 'Use the key', payload: 'DOOROPEN', enableIf: state => state.inventory.key}
 		]
 	},
@@ -55,10 +65,10 @@ const stateTree = {
 function sendState(senderId) {
 	const buttons = [];
 	const userState = states[senderId];
-	const stateEntry = stateTree[userState.state];
+	let stateEntry = stateTree[userState.state];
 
-	if (stateEntry.action) {
-		stateEntry.action(userState);
+	while (stateEntry.action && stateEntry.action(userState)) {
+		stateEntry = stateTree[userState.state];
 	}
 
 	for (const option of stateEntry.options) {
@@ -79,6 +89,7 @@ function sendState(senderId) {
 function initializeUser(senderId) {
 	// Initialize a 'new' user's state
 	states[senderId] = {
+		id: senderId,
 		state: 'START'
 	};
 
