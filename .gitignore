@@ -1,5 +1,7 @@
 # Created by https://www.gitignore.io/api/vim,node,textmate,sublimetext
 
+/config.json
+
 ### Node ###
 # Logs
 logs
