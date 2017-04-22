@@ -16,6 +16,7 @@ const states = {};
 
 const stateTree = {
 	START: {
+		image: randomizer(imageGlob('door')),
 		action: state => {
 			state.inventory = {
 				key: false
@@ -24,6 +25,7 @@ const stateTree = {
 			state.state = 'DOOR';
 
 			Bot.sendText(state.id, 'Welcome to AdventureBot, knave!');
+			Bot.sendImage(state.id, stateTree.START.image());
 
 			return true; // Tell the game that it should immediately run the next state.
 		}
@@ -107,7 +109,7 @@ function sendState(senderId) {
 function imageGlob(folder) {
 	const pattern = `./images/${folder}/*.@(jp?(e)g|png|gif|bmp|tif?(f))`; // Syntax highlight fix */
 	const glob = new Glob(pattern, {sync: true});
-	
+
 	const baseUrl = url.parse(config.serverURL);
 	if (config.debug) {
 		delete baseUrl.host;
