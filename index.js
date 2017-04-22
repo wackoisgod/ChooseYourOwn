@@ -12,7 +12,7 @@ const app = express();
 const states = {};
 
 const stateTree = {
-	INITIAL_MESSAGE: {
+	START: {
 		message: 'You\'re in a room. You see a key next to a door. Do you pick it up or open the door?',
 		action: state => {
 			state.inventory = {
@@ -40,14 +40,14 @@ const stateTree = {
 	DOOR: {
 		message: 'The door is locked.',
 		options: [
-			{text: 'Continue', payload: 'INITIAL_MESSAGE'},
+			{text: 'Continue', payload: 'START'},
 			{text: 'Use the key', payload: 'DOOROPEN', enableIf: state => state.inventory.key}
 		]
 	},
 	DOOROPEN: {
 		message: 'The door opens...',
 		options: [
-			{text: 'Restart', payload: 'INITIAL_MESSAGE'}
+			{text: 'Restart', payload: 'START'}
 		]
 	}
 };
@@ -79,7 +79,7 @@ function sendState(senderId) {
 function initializeUser(senderId) {
 	// Initialize a 'new' user's state
 	states[senderId] = {
-		state: 'INITIAL_MESSAGE'
+		state: 'START'
 	};
 
 	sendState(senderId);
