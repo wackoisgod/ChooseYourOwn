@@ -13,6 +13,8 @@
     "xo": "^0.18.1"
   },
   "dependencies": {
+    "body-parser": "^1.17.1",
+    "express": "^4.15.2",
     "fb-local-chat-bot": "^0.1.42"
   }
 }
