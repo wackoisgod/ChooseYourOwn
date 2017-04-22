@@ -5,6 +5,7 @@
   "description": "Timeshock Games' Adventure Bot",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "xo"
   },
   "author": "Jonah Sanville",
