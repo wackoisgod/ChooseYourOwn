@@ -18,18 +18,33 @@ const stateTree = {
 				key: false
 			};
 
-			state.state = 'LOCKED_DOOR';
+			state.state = 'DOOR';
 
 			Bot.sendText(state.id, 'Welcome to AdventureBot, knave!');
 
 			return true; // Tell the game that it should immediately run the next state.
 		}
 	},
-	LOCKED_DOOR: {
-		message: 'You\'re in a room. You see a key next to a door. Do you pick it up or open the door?',
+	DOOR: {
+		message: state => {
+			let message = 'You\'re in a room.';
+			if (state.inventory.key) {
+				message += ' You see a door.';
+			} else {
+				message += ' You see a key next to a door. Do you pick it up or open the door?';
+			}
+			return message;
+		},
 		options: [
-			{text: 'Pick up the key', payload: 'KEY'},
-			{text: 'Open the door', payload: 'DOOR'}
+			{text: 'Try to open the door', payload: 'LOCKED_DOOR'},
+			{text: 'Pick up the key', payload: 'KEY', enableIf: state => !state.inventory.key},
+			{text: 'Use the key', payload: 'DOOROPEN', enableIf: state => state.inventory.key}
+		]
+	},
+	LOCKED_DOOR: {
+		message: 'The door is locked.',
+		options: [
+			{text: 'Continue', payload: 'DOOR'}
 		]
 	},
 	KEY: {
@@ -38,20 +53,7 @@ const stateTree = {
 			state.inventory.key = true;
 		},
 		options: [
-			{text: 'Continue', payload: 'AFTERKEY'}
-		]
-	},
-	AFTERKEY: {
-		message: 'You\'re in a room. Do you open the door?',
-		options: [
-			{text: 'Open the door', payload: 'DOOR'}
-		]
-	},
-	DOOR: {
-		message: 'The door is locked.',
-		options: [
-			{text: 'Continue', payload: 'LOCKED_DOOR'},
-			{text: 'Use the key', payload: 'DOOROPEN', enableIf: state => state.inventory.key}
+			{text: 'Continue', payload: 'DOOR'}
 		]
 	},
 	DOOROPEN: {
