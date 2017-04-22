@@ -16,11 +16,14 @@
     "body-parser": "^1.17.1",
     "chalk": "^1.1.3",
     "express": "^4.15.2",
-    "fb-local-chat-bot": "^0.1.42"
+    "fb-local-chat-bot": "^0.1.42",
+    "glob": "^7.1.1"
   },
   "xo": {
     "rules": {
-      "operator-linebreak": [0]
+      "operator-linebreak": [
+        0
+      ]
     }
   }
 }

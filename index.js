@@ -1,9 +1,12 @@
 'use strict';
 
+const url = require('url');
+
 const Bot = require('fb-local-chat-bot');
 const bodyParser = require('body-parser');
 const chalk = require('chalk');
 const express = require('express');
+const Glob = require('glob').Glob;
 
 const config = require('./config.json');
 
@@ -49,6 +52,7 @@ const stateTree = {
 	},
 	KEY: {
 		message: 'You pick up the key.',
+		image: randomizer(imageGlob('key')),
 		action: state => {
 			state.inventory.key = true;
 		},
@@ -89,7 +93,37 @@ function sendState(senderId) {
 		? stateEntry.message(userState)
 		: stateEntry.message;
 
+	if (stateEntry.image) {
+		const imageUrl = typeof stateEntry.image === 'function'
+			? stateEntry.image(userState)
+			: stateEntry.image;
+
+		Bot.sendImage(senderId, imageUrl);
+	}
+
 	Bot.sendButtons(senderId, message, buttons);
+}
+
+function imageGlob(folder) {
+	const pattern = `./images/${folder}/*.@(jp?(e)g|png|gif|bmp|tif?(f))`; // Syntax highlight fix */
+	const glob = new Glob(pattern, {sync: true});
+	
+	const baseUrl = url.parse(config.serverURL);
+	if (config.debug) {
+		delete baseUrl.host;
+		baseUrl.protocol = 'http:';
+		baseUrl.hostname = 'localhost';
+		baseUrl.port = config.port;
+	}
+
+	return glob.found.map(imagePath => {
+		baseUrl.pathname = imagePath;
+		return url.format(baseUrl);
+	});
+}
+
+function randomizer(images) {
+	return () => images[Math.floor(Math.random() * images.length)];
 }
 
 function initializeUser(senderId) {
@@ -139,4 +173,5 @@ Bot.on('postback', event => {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use('/webhook', Bot.router());
-app.listen(5000);
+app.use('/images', express.static('images'));
+app.listen(config.port);
