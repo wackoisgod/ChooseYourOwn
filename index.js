@@ -4,9 +4,15 @@ const Bot = require('fb-local-chat-bot');
 const bodyParser = require('body-parser');
 const express = require('express');
 
+const config = require('./config.json');
+
 const app = express();
 
-Bot.init('', 'SETUP_PLAY_GO_THIS_IS_RIGHT', true, false); // TODO debug
+Bot.init(
+	config.pageAccessToken,
+	config.validationToken,
+	config.debug,
+	!config.debug);
 
 Bot.on('text', event => {
 	const senderId = event.sender.id;
