@@ -83,7 +83,11 @@ function sendState(senderId) {
 		}
 	}
 
-	Bot.sendButtons(senderId, stateEntry.message, buttons);
+	const message = typeof stateEntry.message === 'function'
+		? stateEntry.message(userState)
+		: stateEntry.message;
+
+	Bot.sendButtons(senderId, message, buttons);
 }
 
 function initializeUser(senderId) {
