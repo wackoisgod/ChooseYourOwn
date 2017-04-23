@@ -21,48 +21,187 @@ const stateTree = {
 			state.inventory = {
 				key: false
 			};
+			state.warscore = 0;
+			state.mil1 = 0;
+			state.mil2 = 0;
+			state.mil3 = 0;
+			state.people1 = 0;
+			state.people2 = 0;
+			state.people3 = 0;
+			state.econ1 = 0;
+			state.econ2 = 0;
+			state.econ3 = 0;
+			state.sci1 = 0;
+			state.sci2 = 0;
+			state.sci3 = 0;
+			state.diplo1 = 0;
+			state.diplo2 = 0;
+			state.diplo3 = 0;
 
-			state.state = 'DOOR';
+			Bot.sendText(state.id, 'Welcome to WarBot, knave!');
+			// Bot.sendImage(state.id, stateTree.START.image());
 
-			Bot.sendText(state.id, 'Welcome to AdventureBot, knave!');
-			Bot.sendImage(state.id, stateTree.START.image());
-
-			return true; // Tell the game that it should immediately run the next state.
+			return 'PROLOGUE'; // Tell the game that it should immediately run 'PROLOGUE'.
 		}
 	},
-	DOOR: {
-		message: state => {
-			let message = 'You\'re in a room.';
-			if (state.inventory.key) {
-				message += ' You see a door.';
-			} else {
-				message += ' You see a key next to a door. Do you pick it up or open the door?';
-			}
-			return message;
-		},
+	PROLOGUE: {
+		message: 'THIS IS AN OUTRAGE. We are now at war with one of our closest allies and nobody here has any idea what they\'re doing! Your majesty, your court cannot decide an appropriate course of action, so you must absolve all doubt and choose a path for the future of our country.', // Advisors are arguing with each other
 		options: [
-			{text: 'Try to open the door', payload: 'LOCKED_DOOR'},
-			{text: 'Pick up the key', payload: 'KEY', enableIf: state => !state.inventory.key},
-			{text: 'Use the key', payload: 'DOOROPEN', enableIf: state => state.inventory.key}
+			{text: 'Choose', payload: 'MIL1'}
 		]
 	},
-	LOCKED_DOOR: {
-		message: 'The door is locked.',
+	MIL1: {
+		message: 'The enemy severely outnumbers us, and our forces are not yet primed for battle. We can regain composure by the time the enemy reaches us, but there is an opportunity for our ally, Denmark, to take the enemy capital while we hold off the bulk of the enemy forces. Is that a risk you’re willing to take?', // Military states his case and presents options
 		options: [
-			{text: 'Continue', payload: 'DOOR'}
+			{text: 'Yes', payload: 'MIL2YES'},
+			{text: 'No', payload: 'MIL2NO'}
 		]
 	},
-	KEY: {
-		message: 'You pick up the key.',
-		image: randomizer(imageGlob('key')),
+	MIL2YES: {
 		action: state => {
-			state.inventory.key = true;
-		},
+			state.warscore += 1;
+			state.mil1 = 0;
+			return 'MIL2';
+		}
+	},
+	MIL2NO: {
+		action: state => {
+			state.warscore += 0;
+			state.mil1 = 1;
+			return 'MIL2';
+		}
+	},
+	MIL2: {
+		message: 'When the enemy reaches us, should we defend the outermost provinces, the river surrounding our lands, or the castle keep? We may lose land and stability based on this decision.', // Military states his case and presents options
 		options: [
-			{text: 'Continue', payload: 'DOOR'}
+			{text: 'Provinces', payload: 'MIL3PROVINCES'},
+			{text: 'River', payload: 'MIL3RIVER'},
+			{text: 'Keep', payload: 'MIL3KEEP'}
 		]
 	},
-	DOOROPEN: {
+	MIL3PROVINCES: {
+		action: state => {
+			state.warscore += 0;
+			state.mil2 = 0;
+			return 'MIL3';
+		}
+	},
+	MIL3RIVER: {
+		action: state => {
+			state.warscore += 1;
+			state.mil2 = 1;
+			return 'MIL3';
+		}
+	},
+	MIL3KEEP: {
+		action: state => {
+			state.warscore += -1;
+			state.mil2 = 2;
+			return 'MIL3';
+		}
+	},
+	MIL3: {
+		message: 'Should we win the initial battle, do we attack the enemy’s naval trade port, the ruling king’s fortress, or spread out and control the commoners?',
+		options: [
+			{text: 'Port', payload: 'PEOPLE1PORT'},
+			{text: 'Commoners', payload: 'PEOPLE1COMMONERS'},
+			{text: 'Fortress', payload: 'PEOPLE1FORTRESS'}
+		]
+	},
+	PEOPLE1PORT: {
+		action: state => {
+			state.warscore += 1;
+			state.mil3 = 0;
+			return 'PEOPLE1';
+		}
+	},
+	PEOPLE1COMMONERS: {
+		action: state => {
+			state.warscore += 0;
+			state.mil3 = 1;
+			return 'PEOPLE1';
+		}
+	},
+	PEOPLE1FORTRESS: {
+		action: state => {
+			state.warscore += -1;
+			state.mil3 = 2;
+			return 'PEOPLE1';
+		}
+	},
+	PEOPLE1: {
+		message: 'The door opens...',
+		options: [
+			{text: 'Restart', payload: 'START'}
+		]
+	},
+	PEOPLE2: {
+		message: 'The door opens...',
+		options: [
+			{text: 'Restart', payload: 'START'}
+		]
+	},
+	PEOPLE3: {
+		message: 'The door opens...',
+		options: [
+			{text: 'Restart', payload: 'START'}
+		]
+	},
+	ECON1: {
+		message: 'The door opens...',
+		options: [
+			{text: 'Restart', payload: 'START'}
+		]
+	},
+	ECON2: {
+		message: 'The door opens...',
+		options: [
+			{text: 'Restart', payload: 'START'}
+		]
+	},
+	ECON3: {
+		message: 'The door opens...',
+		options: [
+			{text: 'Restart', payload: 'START'}
+		]
+	},
+	SCI1: {
+		message: 'The door opens...',
+		options: [
+			{text: 'Restart', payload: 'START'}
+		]
+	},
+	SCI2: {
+		message: 'The door opens...',
+		options: [
+			{text: 'Restart', payload: 'START'}
+		]
+	},
+	SCI3: {
+		message: 'The door opens...',
+		options: [
+			{text: 'Restart', payload: 'START'}
+		]
+	},
+	DIPLO1: {
+		message: 'The door opens...',
+		options: [
+			{text: 'Restart', payload: 'START'}
+		]
+	},
+	DIPLO2: {
+		message: 'The door opens...',
+		options: [
+			{text: 'Restart', payload: 'START'}
+		]
+	},
+	DIPLO3: {
+		message: 'The door opens...',
+		options: [
+			{text: 'Restart', payload: 'START'}
+		]
+	},
+	NARRATOR1: {
 		message: 'The door opens...',
 		options: [
 			{text: 'Restart', payload: 'START'}
@@ -70,13 +209,26 @@ const stateTree = {
 	}
 };
 
+function validateStateEntry(name, previous) {
+	if (stateTree[name]) {
+		return name;
+	}
+
+	console.error(`${chalk.red.bold('ERROR:')} invalid state returned from action: ${chalk.bold(name)} (currently at state ${chalk.bold(previous)})`);
+	Bot.sendText('Oh no! There was a problem with that option. We\'ll get a fix out soon!');
+	return 'START'; // Nothing else we can do!
+}
+
 function sendState(senderId) {
 	const buttons = [];
 	const userState = states[senderId];
 	let stateEntry = stateTree[userState.state];
 
-	while (stateEntry.action && stateEntry.action(userState)) {
-		stateEntry = stateTree[userState.state];
+	let nextAction = null;
+	while (stateEntry.action && (nextAction = stateEntry.action(userState))) {
+		nextAction = validateStateEntry(nextAction, userState.state);
+		stateEntry = stateTree[nextAction];
+		userState.state = nextAction;
 	}
 
 	for (const option of stateEntry.options) {
