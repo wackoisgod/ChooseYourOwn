@@ -224,6 +224,8 @@ function sendState(senderId) {
 	const userState = states[senderId];
 	let stateEntry = stateTree[userState.state];
 
+	generateNonce(senderId);
+
 	let nextAction = null;
 	while (stateEntry.action && (nextAction = stateEntry.action(userState))) {
 		nextAction = validateStateEntry(nextAction, userState.state);
@@ -238,7 +240,8 @@ function sendState(senderId) {
 		}
 
 		if (enable) {
-			const button = Bot.createPostbackButton(option.text, option.payload);
+			const noncedPayload = applyNonce(senderId, option.payload);
+			const button = Bot.createPostbackButton(option.text, noncedPayload);
 			buttons.push(button);
 		}
 	}
@@ -280,6 +283,26 @@ function randomizer(images) {
 	return () => images[Math.floor(Math.random() * images.length)];
 }
 
+function applyNonce(senderId, payload) {
+	return `${payload}@@${states[senderId].nonce}`;
+}
+
+function generateNonce(senderId) {
+	states[senderId].nonce = (Math.random() * 100000000).toString(32);
+}
+
+function consumeNonce(senderId, payload) {
+	const spl = payload.split(/@@(.+)/);
+
+	const userState = states[senderId];
+	if (spl[1] === userState.nonce) {
+		userState.nonce = '___no_nonce___';
+		return spl[0];
+	}
+
+	return null;
+}
+
 function initializeUser(senderId) {
 	// Initialize a 'new' user's state
 	states[senderId] = {
@@ -303,10 +326,15 @@ Bot.on('text', event => {
 
 Bot.on('postback', event => {
 	const senderId = event.sender.id;
-	const payload = event.postback.payload;
 
 	if (!states[senderId]) {
 		initializeUser(senderId);
+		return;
+	}
+
+	const payload = consumeNonce(senderId, event.postback.payload);
+	if (!payload) {
+		// Invalid nonce; user hit an old button twice.
 		return;
 	}
 
