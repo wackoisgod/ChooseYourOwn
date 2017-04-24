@@ -111,13 +111,13 @@ story =
 					user.warscore += 1
 					user.mil3 = 0
 					return 'PEOPLE1'
-			},
+			}
 			{
 				text: 'Commoners'
 				action: (user) ->
 					user.mil3 = 1
 					return 'PEOPLE1'
-			},
+			}
 			{
 				text: 'Fortress'
 				action: (user) ->
@@ -128,79 +128,79 @@ story =
 		]
 
 	PEOPLE1:
-		message: 'The door opens...',
+		message: 'The door opens...'
 		options: [
 			{text: 'Restart', action: 'START'}
 		]
 
 	PEOPLE2:
-		message: 'The door opens...',
+		message: 'The door opens...'
 		options: [
 			{text: 'Restart', action: 'START'}
 		]
 
 	PEOPLE3:
-		message: 'The door opens...',
+		message: 'The door opens...'
 		options: [
 			{text: 'Restart', action: 'START'}
 		]
 
 	ECON1:
-		message: 'The door opens...',
+		message: 'The door opens...'
 		options: [
 			{text: 'Restart', action: 'START'}
 		]
 
 	ECON2:
-		message: 'The door opens...',
+		message: 'The door opens...'
 		options: [
 			{text: 'Restart', action: 'START'}
 		]
 
 	ECON3:
-		message: 'The door opens...',
+		message: 'The door opens...'
 		options: [
 			{text: 'Restart', action: 'START'}
 		]
 
 	SCI1:
-		message: 'The door opens...',
+		message: 'The door opens...'
 		options: [
 			{text: 'Restart', action: 'START'}
 		]
 
 	SCI2:
-		message: 'The door opens...',
+		message: 'The door opens...'
 		options: [
 			{text: 'Restart', action: 'START'}
 		]
 
 	SCI3:
-		message: 'The door opens...',
+		message: 'The door opens...'
 		options: [
 			{text: 'Restart', action: 'START'}
 		]
 
 	DIPLO1:
-		message: 'The door opens...',
+		message: 'The door opens...'
 		options: [
 			{text: 'Restart', action: 'START'}
 		]
 
 	DIPLO2:
-		message: 'The door opens...',
+		message: 'The door opens...'
 		options: [
 			{text: 'Restart', action: 'START'}
 		]
 
 	DIPLO3:
-		message: 'The door opens...',
+		message: 'The door opens...'
 		options: [
 			{text: 'Restart', action: 'START'}
 		]
 
 	NARRATOR1:
-		message: 'The door opens...',
+		message: 'The door opens...'
 		options: [
 			{text: 'Restart', action: 'START'}
 		]
