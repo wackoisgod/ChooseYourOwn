@@ -1,7 +1,5 @@
 'use strict';
 
-const path = require('path');
-
 const bodyParser = require('body-parser');
 const Bot = require('fb-local-chat-bot');
 const chalk = require('chalk');
@@ -192,30 +190,32 @@ Bot.on('postback', event => {
 	user.execute(action);
 });
 
-module.exports = {
-	initialize: (config, story, beginningState) => {
-		startState = beginningState || 'START';
-		storyTree = story || storyTree;
+function initialize(config, story, beginningState) {
+	startState = beginningState || 'START';
+	storyTree = story || storyTree;
 
-		log.info('initializing story bot system with', chalk.bold(Object.keys(storyTree).length), 'state(s)');
-		log.info('all users will start at state:', chalk.bold(startState));
+	log.info('initializing story bot system with', chalk.bold(Object.keys(storyTree).length), 'state(s)');
+	log.info('all users will start at state:', chalk.bold(startState));
 
-		const debugMode = Boolean(config.debug);
-		if (debugMode) {
-			log.info('bot is in', chalk.yellow('debug mode'));
-		}
-
-		Bot.init(config.pageAccessToken, config.validationToken, debugMode, !debugMode);
-
-		app.use(bodyParser.json());
-		app.use(bodyParser.urlencoded({extended: true}));
-		app.use('/webhook', Bot.router());
-		app.use('/images', express.static(path.join(__dirname, 'images')));
-
-		const port = process.env.PORT || config.port || 5000;
-		app.listen(port);
-		log.info('listening on port', chalk.bold(port));
-
-		log.info('ready!');
+	const debugMode = Boolean(config.debug);
+	if (debugMode) {
+		log.info('bot is in', chalk.yellow('debug mode'));
 	}
+
+	Bot.init(config.pageAccessToken, config.validationToken, debugMode, !debugMode);
+
+	app.use(bodyParser.json());
+	app.use(bodyParser.urlencoded({extended: true}));
+	app.use('/webhook', Bot.router());
+
+	const port = process.env.PORT || config.port || 5000;
+	app.listen(port);
+	log.info('listening on port', chalk.bold(port));
+
+	log.info('ready!');
+}
+
+module.exports = {
+	app,
+	initialize
 };

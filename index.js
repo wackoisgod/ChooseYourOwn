@@ -1,7 +1,9 @@
 'use strict';
 
+const path = require('path');
 const url = require('url');
 
+const express = require('express');
 const Glob = require('glob').Glob;
 const StoryBot = require('./bot.js');
 
@@ -33,7 +35,7 @@ const story = {
 			user.diplo3 = 0;
 
 			user.sendText('Welcome to WarBot, knave!');
-			// user.sendImage(story.START.image());
+			user.sendImage(story.START.image());
 
 			return 'PROLOGUE'; // Tell the game that it should immediately run 'PROLOGUE'.
 		}
@@ -222,4 +224,5 @@ function randomizer(images) {
 	return () => images[Math.floor(Math.random() * images.length)];
 }
 
+StoryBot.app.use('/images', express.static(path.join(__dirname, 'images')));
 StoryBot.initialize(config, story);
