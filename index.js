@@ -35,7 +35,7 @@ const story = {
 			user.diplo3 = 0;
 
 			user.sendText('Welcome to WarBot, knave!');
-			user.sendImage(story.START.image());
+			// user.sendImage(story.START.image());
 
 			return 'PROLOGUE'; // Tell the game that it should immediately run 'PROLOGUE'.
 		}
