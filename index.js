@@ -225,5 +225,4 @@ function randomizer(images) {
 	return () => images[Math.floor(Math.random() * images.length)];
 }
 
-// StoryBot.initialize(config, story);
-StoryBot.initialize(config);
+StoryBot.initialize(config, story);

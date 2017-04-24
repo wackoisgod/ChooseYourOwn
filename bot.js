@@ -75,7 +75,7 @@ class User {
 				nextAction = null;
 
 				const decodedAction = action.match(/^(.+?)(?:::(\d+))?$/);
-				const storyItem = storyTree[decodedAction[0]];
+				const storyItem = storyTree[decodedAction[1]];
 
 				if (!storyItem) {
 					log.warn('user', chalk.bold(this._id), 'attempted to execute invalid action; retting session (was: ', chalk.magenta(action), ')');
@@ -85,8 +85,8 @@ class User {
 				}
 
 				// Was it an option payload?
-				if (decodedAction[1] && storyItem.options && storyItem.options[decodedAction[1]]) {
-					const option = storyItem.options[decodedAction[1]];
+				if (decodedAction[2] && storyItem.options && storyItem.options[decodedAction[2]]) {
+					const option = storyItem.options[decodedAction[2]];
 					nextAction = this._expand(option.action);
 				} else {
 					// Run the state's action
@@ -159,14 +159,13 @@ Bot.on('text', event => {
 Bot.on('postback', event => {
 	const id = event.sender.id;
 	const payload = event.postback.payload;
+	const user = states[id];
 
-	if (!states[id]) {
+	if (!user) {
 		log.warn('user', chalk.bold(id), 'performed a postback but didn\'t have a state; resetting session');
 		initializeUser(id);
 		return;
 	}
-
-	const user = states[id];
 
 	if (!payload) {
 		log.warn('user', chalk.bold(id), 'did not supply a payload with a postback; resetting session (was: ', chalk.magenta(user._state), ')');
@@ -175,21 +174,21 @@ Bot.on('postback', event => {
 	}
 
 	// Validate nonce
-	const spl = payload.match(/^(.+?)@@(.+)$/);
-	if (!spl) {
+	const matches = payload.match(/^(.+?)@@(.+)$/);
+	if (!matches) {
 		log.warn('user', chalk.bold(id), 'supplied a payload without a nonce; resetting session (was: ', chalk.magenta(user._state), ')');
 		initializeUser(id);
 		return;
 	}
 
-	if (!user._consumeNonce(spl[1])) {
+	if (!user._consumeNonce(matches[2])) {
 		// We don't worry about logging here since this happens when users hit an old button; something
 		// that is bound to happen at some point, and potentially quite frequently.
 		return;
 	}
 
 	// Finally, execute the postback action.
-	const action = spl[0];
+	const action = matches[1];
 	user.execute(action);
 });
 
