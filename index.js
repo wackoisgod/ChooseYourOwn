@@ -2,45 +2,38 @@
 
 const url = require('url');
 
-const Bot = require('fb-local-chat-bot');
-const bodyParser = require('body-parser');
-const chalk = require('chalk');
-const express = require('express');
 const Glob = require('glob').Glob;
+const StoryBot = require('./bot.js');
 
 const config = require('./config.json');
 
-const app = express();
-
-const states = {};
-
-const stateTree = {
+const story = {
 	START: {
 		image: randomizer(imageGlob('door')),
-		action: state => {
-			state.inventory = {
+		action: user => {
+			user.inventory = {
 				key: false
 			};
 
-			state.warscore = 0;
-			state.mil1 = 0;
-			state.mil2 = 0;
-			state.mil3 = 0;
-			state.people1 = 0;
-			state.people2 = 0;
-			state.people3 = 0;
-			state.econ1 = 0;
-			state.econ2 = 0;
-			state.econ3 = 0;
-			state.sci1 = 0;
-			state.sci2 = 0;
-			state.sci3 = 0;
-			state.diplo1 = 0;
-			state.diplo2 = 0;
-			state.diplo3 = 0;
+			user.warscore = 0;
+			user.mil1 = 0;
+			user.mil2 = 0;
+			user.mil3 = 0;
+			user.people1 = 0;
+			user.people2 = 0;
+			user.people3 = 0;
+			user.econ1 = 0;
+			user.econ2 = 0;
+			user.econ3 = 0;
+			user.sci1 = 0;
+			user.sci2 = 0;
+			user.sci3 = 0;
+			user.diplo1 = 0;
+			user.diplo2 = 0;
+			user.diplo3 = 0;
 
-			Bot.sendText(state.id, 'Welcome to WarBot, knave!');
-			// Bot.sendImage(state.id, stateTree.START.image());
+			user.sendText('Welcome to WarBot, knave!');
+			// user.sendImage(story.START.image());
 
 			return 'PROLOGUE'; // Tell the game that it should immediately run 'PROLOGUE'.
 		}
@@ -59,16 +52,16 @@ const stateTree = {
 		]
 	},
 	MIL2YES: {
-		action: state => {
-			state.warscore += 1;
-			state.mil1 = 0;
+		action: user => {
+			user.warscore += 1;
+			user.mil1 = 0;
 			return 'MIL2';
 		}
 	},
 	MIL2NO: {
-		action: state => {
-			state.warscore += 0;
-			state.mil1 = 1;
+		action: user => {
+			user.warscore += 0;
+			user.mil1 = 1;
 			return 'MIL2';
 		}
 	},
@@ -81,23 +74,23 @@ const stateTree = {
 		]
 	},
 	MIL3PROVINCES: {
-		action: state => {
-			state.warscore += 0;
-			state.mil2 = 0;
+		action: user => {
+			user.warscore += 0;
+			user.mil2 = 0;
 			return 'MIL3';
 		}
 	},
 	MIL3RIVER: {
-		action: state => {
-			state.warscore += 1;
-			state.mil2 = 1;
+		action: user => {
+			user.warscore += 1;
+			user.mil2 = 1;
 			return 'MIL3';
 		}
 	},
 	MIL3KEEP: {
-		action: state => {
-			state.warscore += -1;
-			state.mil2 = 2;
+		action: user => {
+			user.warscore += -1;
+			user.mil2 = 2;
 			return 'MIL3';
 		}
 	},
@@ -110,23 +103,23 @@ const stateTree = {
 		]
 	},
 	PEOPLE1PORT: {
-		action: state => {
-			state.warscore += 1;
-			state.mil3 = 0;
+		action: user => {
+			user.warscore += 1;
+			user.mil3 = 0;
 			return 'PEOPLE1';
 		}
 	},
 	PEOPLE1COMMONERS: {
-		action: state => {
-			state.warscore += 0;
-			state.mil3 = 1;
+		action: user => {
+			user.warscore += 0;
+			user.mil3 = 1;
 			return 'PEOPLE1';
 		}
 	},
 	PEOPLE1FORTRESS: {
-		action: state => {
-			state.warscore += -1;
-			state.mil3 = 2;
+		action: user => {
+			user.warscore += -1;
+			user.mil3 = 2;
 			return 'PEOPLE1';
 		}
 	},
@@ -210,58 +203,6 @@ const stateTree = {
 	}
 };
 
-function validateStateEntry(name, previous) {
-	if (stateTree[name]) {
-		return name;
-	}
-
-	console.error(`${chalk.red.bold('ERROR:')} invalid state returned from action: ${chalk.bold(name)} (currently at state ${chalk.bold(previous)})`);
-	Bot.sendText('Oh no! There was a problem with that option. We\'ll get a fix out soon!');
-	return 'START'; // Nothing else we can do!
-}
-
-function sendState(senderId) {
-	const buttons = [];
-	const userState = states[senderId];
-	let stateEntry = stateTree[userState._state];
-
-	generateNonce(senderId);
-
-	let nextAction = null;
-	while (stateEntry.action && (nextAction = stateEntry.action(userState))) {
-		nextAction = validateStateEntry(nextAction, userState._state);
-		stateEntry = stateTree[nextAction];
-		userState._state = nextAction;
-	}
-
-	for (const option of stateEntry.options) {
-		let enable = true;
-		if (option.enableIf) {
-			enable = option.enableIf(userState);
-		}
-
-		if (enable) {
-			const noncedPayload = applyNonce(senderId, option.action);
-			const button = Bot.createPostbackButton(option.text, noncedPayload);
-			buttons.push(button);
-		}
-	}
-
-	const message = typeof stateEntry.message === 'function'
-		? stateEntry.message(userState)
-		: stateEntry.message;
-
-	if (stateEntry.image) {
-		const imageUrl = typeof stateEntry.image === 'function'
-			? stateEntry.image(userState)
-			: stateEntry.image;
-
-		Bot.sendImage(senderId, imageUrl);
-	}
-
-	Bot.sendButtons(senderId, message, buttons);
-}
-
 function imageGlob(folder) {
 	const pattern = `./images/${folder}/*.@(jp?(e)g|png|gif|bmp|tif?(f))`; // Syntax highlight fix */
 	const glob = new Glob(pattern, {sync: true});
@@ -284,80 +225,5 @@ function randomizer(images) {
 	return () => images[Math.floor(Math.random() * images.length)];
 }
 
-function applyNonce(senderId, payload) {
-	return `${payload}@@${states[senderId].nonce}`;
-}
-
-function generateNonce(senderId) {
-	states[senderId].nonce = (Math.random() * 100000000).toString(32);
-}
-
-function consumeNonce(senderId, payload) {
-	const spl = payload.split(/@@(.+)/);
-
-	const userState = states[senderId];
-	if (spl[1] === userState.nonce) {
-		userState.nonce = '___no_nonce___';
-		return spl[0];
-	}
-
-	return null;
-}
-
-function initializeUser(senderId) {
-	// Initialize a 'new' user's state
-	states[senderId] = {
-		_id: senderId,
-		_state: 'START'
-	};
-
-	sendState(senderId);
-}
-
-Bot.init(
-	config.pageAccessToken,
-	config.validationToken,
-	config.debug,
-	!config.debug);
-
-Bot.on('text', event => {
-	const senderId = event.sender.id;
-	initializeUser(senderId);
-});
-
-Bot.on('postback', event => {
-	const senderId = event.sender.id;
-
-	if (!states[senderId]) {
-		initializeUser(senderId);
-		return;
-	}
-
-	const payload = consumeNonce(senderId, event.postback.payload);
-	if (!payload) {
-		// Invalid nonce; user hit an old button twice.
-		return;
-	}
-
-	const userState = states[senderId];
-
-	if (!(payload in stateTree)) {
-		sendState(senderId);
-		console.warn(`${chalk.yellow.bold('WARNING:')} invalid payload received from user ${chalk.magenta(senderId)}: ${chalk.bold(payload)} (currently at state ${chalk.bold(userState._state)})`);
-		Bot.sendText(senderId, 'Oh no! There was a problem processing that selection. I\'ve notified my creators.');
-		return;
-	}
-
-	userState._state = payload;
-
-	sendState(senderId);
-});
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
-app.use('/webhook', Bot.router());
-app.use('/images', express.static('images'));
-
-const port = process.env.PORT || config.port || 5000;
-app.listen(port);
-console.log(`listening on port ${chalk.bold(port)}`);
+// StoryBot.initialize(config, story);
+StoryBot.initialize(config);
