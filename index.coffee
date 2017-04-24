@@ -260,7 +260,7 @@ story =
 				text: 'Yes'
 				action: (user) ->
 					user.mil3 = 1
-					return 'Sci3'
+					return 'SCI3'
 			}
 			{
 				text: 'No'
@@ -357,15 +357,23 @@ story =
 		]
 
 	RESULTS:
-		message: (user) ->
-			switch
+		action: (user) ->
+			finalMessage = switch
 				when -5 <= user.warscore < 5 then 'Your military was crushed immediately. Your defensive positions failed. Your support fell through. What’s left is only a remnant.'
 				when 5 <= user.warscore < 10 then 'Eh you were alright' # TODO
 				when 10 <= user.warscore then 'Wow you were actually good' # TODO
-		action: 'FINAL_SCORE'
+			user.sendText finalMessage
+			user.sendText "Your final score was #{user.warscore}"
+			return 'RESTART'
 
-	FINAL_SCORE:
-		message: (user) -> "Your final score was #{user.warscore}"
+	RESTART:
+		message: 'Would you like to try again?',
+		options: [
+			{
+				text: 'Restart'
+				action: 'PROLOGUE'
+			}
+		]
 
 StoryBot.app.use '/images', express.static path.join __dirname, 'images'
 StoryBot.initialize config, story

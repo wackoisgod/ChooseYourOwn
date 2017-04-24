@@ -35,7 +35,10 @@ class User {
 
 	sendText(...strings) {
 		if (strings && strings.length > 0) {
-			Bot.sendText(this._id, strings.join(' '));
+			const message = strings.join(' ').trim();
+			if (message.length > 0) {
+				Bot.sendText(this._id, message);
+			}
 		}
 	}
 
@@ -46,6 +49,10 @@ class User {
 	}
 
 	sendButtons(text, options) {
+		if (!text || (text = text.trim()).length === 0) {
+			return;
+		}
+
 		const botButtons = [];
 
 		if (options && options.length > 0) {
@@ -76,7 +83,7 @@ class User {
 				const storyItem = storyTree[decodedAction[1]];
 
 				if (!storyItem) {
-					log.warn('user', chalk.bold(this._id), 'attempted to execute invalid action; retting session (was: ', chalk.magenta(action), ')');
+					log.warn('user', chalk.bold(this._id), 'attempted to execute invalid action; resetting session (was: ', chalk.magenta(action), ')');
 					this.sendText('Oh no! There was a problem handling whatever it is you just did. I\'ve let the developers know.');
 					delete states[this._id]; // We merely delete and not initializeUser() since we don't want to (potentially) spam them
 					return;
