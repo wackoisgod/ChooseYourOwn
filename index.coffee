@@ -46,20 +46,25 @@ story =
 			user.diplo3 = 0
 
 			user.sendText 'Welcome to WarBot, knave!'
-			# user.sendImage story.START.image()
+			# user.sendImage story.START.image?()
 
 			return 'PROLOGUE' # Tell the game that it should immediately run 'PROLOGUE'.
+
 
 	PROLOGUE:
 		# Advisors are arguing with each other
 		message: 'It is a dark day for your country. We are now suddenly at war with one of our closest allies! Your majesty, your court cannot decide an appropriate course of action, so you must absolve all doubt and choose a path for the future of our country.'
+		image: randomizer imageGlob 'prologue'
 		options: [
 			{text: 'Choose', action: 'MIL1'}
 		]
 
 	MIL1:
 		# Military states his case and presents options
-		message: 'The enemy severely outnumbers us, and our forces are not yet primed for battle. We can regain composure by the time the enemy reaches us, but there is an opportunity for our allies to take the enemy capital while we hold off the bulk of the enemy forces. Is that a risk you’re willing to take?'
+		message: (user) ->
+			user.sendImage story.MIL1.image?()
+			'The enemy severely outnumbers us, and our forces are not yet primed for battle. We can regain composure by the time the enemy reaches us, but there is an opportunity for our allies to take the enemy capital while we hold off the bulk of the enemy forces. Is that a risk you’re willing to take?'
+		image: randomizer imageGlob 'capitalSwipe'
 		options: [
 			{
 				text: 'Yes'
@@ -78,7 +83,10 @@ story =
 
 	MIL2:
 		# Military states his case and presents options
-		message: 'When the enemy reaches us, should we defend the outermost provinces, the river surrounding our lands, or the castle keep? We may lose land and stability based on this decision.'
+		message: (user) ->
+			user.sendImage story.MIL2.image?()
+			'When the enemy reaches us, should we defend the outermost provinces, the river surrounding our lands, or the castle keep? We may lose land and stability based on this decision.'
+		image: randomizer imageGlob 'battleLocation'
 		options: [
 			{
 				text: 'Provinces'
@@ -103,7 +111,10 @@ story =
 		]
 
 	MIL3:
-		message: 'If we win the initial battle, do we attack the enemy’s naval trade port, the ruling king’s fortress, or spread out and control the commoners?'
+		message: (user) ->
+			user.sendImage story.MIL3.image?()
+			'If we win the initial battle, do we attack the enemy’s naval trade port, the ruling king’s fortress, or spread out and control the commoners?'
+		image: randomizer imageGlob 'attack'
 		options: [
 			{
 				text: 'Port'
@@ -128,7 +139,9 @@ story =
 		]
 
 	PEOPLE1:
-		message: 'Our people are growing worrisome about what little they know of the conflict, we must send a strong message of anger and conviction. However, the frightened commoners may flee the country and leave our resources bare, so we might choose to send no message at all. '
+		message: (user) ->
+			user.sendImage story.PEOPLE1.image?()
+			'Our people are growing worrisome about what little they know of the conflict, we must send a strong message of anger and conviction. However, the frightened commoners may flee the country and leave our resources bare, so we might choose to send no message at all. '
 		options: [
 			{
 				text: 'Anger'
@@ -146,7 +159,10 @@ story =
 		]
 
 	PEOPLE2:
-		message: 'The country in need must demand wartime taxes in order to preserve all that we have worked toward. This can only go on for so long before destroying our people’s spirits and country from the inside. Should we enact full or half wartime taxes to remain competitive?'
+		message: (user) ->
+			user.sendImage story.PEOPLE2.image?()
+			'The country in need must demand wartime taxes in order to preserve all that we have worked toward. This can only go on for so long before destroying our people’s spirits and country from the inside. Should we enact full or half wartime taxes to remain competitive?'
+		image: randomizer imageGlob 'wartimeTaxes'
 		options: [
 			{
 				text: 'Full'
@@ -164,7 +180,9 @@ story =
 		]
 
 	PEOPLE3:
-		message: 'A beloved king that loves it’s people would do anything to help save them. Should we spare them the cruel subjugation of our enemies by protecting even common folk within our keep, or not show misleading expectations that no king could possibly maintain for long?'
+		message: (user) ->
+			user.sendImage story.PEOPLE3.image?()
+			'A beloved king that loves it’s people would do anything to help save them. Should we spare them the cruel subjugation of our enemies by protecting even common folk within our keep, or not show misleading expectations that no king could possibly maintain for long?'
 		options: [
 			{
 				text: 'Save Them'
@@ -182,7 +200,10 @@ story =
 		]
 
 	ECON1:
-		message: 'Our economy is the strongest asset in our country, and our valuable trade routes are being plundered by the enemy overseas. It would take too long to build our own navy, so we must consider hiring mercenaries that get the job done. We have little amounts of enemy intel on fleet numbers, so should we amass a modest or formidable force?'
+		message: (user) ->
+			user.sendImage story.ECON1.image?()
+			'Our economy is the strongest asset in our country, and our valuable trade routes are being plundered by the enemy overseas. It would take too long to build our own navy, so we must consider hiring mercenaries that get the job done. We have little amounts of enemy intel on fleet numbers, so should we amass a modest or formidable force?'
+		image: randomizer imageGlob 'ship'
 		options: [
 			{
 				text: 'Weak'
@@ -200,7 +221,10 @@ story =
 		]
 
 	ECON2:
-		message: 'Our kingdom and the enemy are within the grounds of the Holy Roman Empire, but the emperor is rarely involved in mediating internal warfare these days. We can bribe the emperor to assist us with a small imperial force, but it could completely deplete our current funds.'
+		message: (user) ->
+			user.sendImage story.ECON2.image?()
+			'Our kingdom and the enemy are within the grounds of the Holy Roman Empire, but the emperor is rarely involved in mediating internal warfare these days. We can bribe the emperor to assist us with a small imperial force, but it could completely deplete our current funds.'
+		image: randomizer imageGlob 'empire'
 		options: [
 			{
 				text: 'Bribe'
@@ -218,7 +242,10 @@ story =
 		]
 
 	ECON3:
-		message: 'We could issue an embargo on the enemy, preventing trade between our two countries. This would show the world we are a strong independent country, at the risk of actually losing significant amounts of income. '
+		message: (user) ->
+			user.sendImage story.ECON3.image?()
+			'We could issue an embargo on the enemy, preventing trade between our two countries. This would show the world we are a strong independent country, at the risk of actually losing significant amounts of income. '
+		image: randomizer imageGlob 'embargo'
 		options: [
 			{
 				text: 'Embargo'
@@ -236,7 +263,10 @@ story =
 		]
 
 	SCI1:
-		message: 'Our lands can benefit from recent advancements in artillery or cavalry systems, but we only have enough funding allocated for one. Artillery is best suited for offensive siege tactics, whereas cavalry can be rapidly deployed across the country to protect our provinces. Which should we buy?'
+		message: (user) ->
+			user.sendImage story.SCI1.image?()
+			'Our lands can benefit from recent advancements in artillery or cavalry systems, but we only have enough funding allocated for one. Artillery is best suited for offensive siege tactics, whereas cavalry can be rapidly deployed across the country to protect our provinces. Which should we buy?'
+		image: randomizer imageGlob 'artillery'
 		options: [
 			{
 				text: 'Artillery'
@@ -254,7 +284,10 @@ story =
 		]
 
 	SCI2:
-		message: 'Recent calculations show that star-shaped fortresses, or trace italienne, are the most defensible buildings known to man. We can rapidly assert our bastions to reflect these scientific advancements, at the risk of total failure to construct in time. Should we take a chance on new technology?'
+		message: (user) ->
+			user.sendImage story.SCI2.image?()
+			'Recent calculations show that star-shaped fortresses, or trace italienne, are the most defensible buildings known to man. We can rapidly assert our bastions to reflect these scientific advancements, at the risk of total failure to construct in time. Should we take a chance on new technology?'
+		image: randomizer imageGlob 'starfort'
 		options: [
 			{
 				text: 'Yes'
@@ -272,7 +305,10 @@ story =
 		]
 
 	SCI3:
-		message: 'The caliver, a gun with a more superior design, is a powerful penetrator of steel-plated armors, and we can increase the rationing of such equipment at the expense of not buying armor plates for our own troops. Should we buy the guns or armor?'
+		message: (user) ->
+			user.sendImage story.SCI3.image?()
+			'The caliver, a gun with a more superior design, is a powerful penetrator of steel-plated armors, and we can increase the rationing of such equipment at the expense of not buying armor plates for our own troops. Should we buy the guns or armor?'
+		image: randomizer imageGlob 'caliver'
 		options: [
 			{
 				text: 'Guns'
@@ -290,7 +326,10 @@ story =
 		]
 
 	DIPLO1:
-		message: 'Our allies are many yet small. We should gain the favor of a larger nation, such as France, in order to intimidate our larger opponent. With such favor, comes great expectation to shift trade agreements in their obvious benefit. Should we enter into a mutual agreement for a strong immediate return?'
+		message: (user) ->
+			user.sendImage story.DIPLO1.image?()
+			'Our allies are many yet small. We should gain the favor of a larger nation, such as France, in order to intimidate our larger opponent. With such favor, comes great expectation to shift trade agreements in their obvious benefit. Should we enter into a mutual agreement for a strong immediate return?'
+		image: randomizer imageGlob 'franceAlly'
 		options: [
 			{
 				text: 'Yes'
@@ -308,7 +347,10 @@ story =
 		]
 
 	DIPLO2:
-		message: 'Within every group of people lies extremists. We can send spies into the enemy country and fund rebellion groups in order to cause dissent within enemy ranks. The rebellion will also cause angry mobs and attack anyone at will, weakening our own presence. Should we support chaos, or order?'
+		message: (user) ->
+			user.sendImage story.DIPLO2.image?()
+			'Within every group of people lies extremists. We can send spies into the enemy country and fund rebellion groups in order to cause dissent within enemy ranks. The rebellion will also cause angry mobs and attack anyone at will, weakening our own presence. Should we support chaos, or order?'
+		image: randomizer imageGlob 'chaos'
 		options: [
 			{
 				text: 'Chaos'
@@ -327,7 +369,10 @@ story =
 		]
 
 	DIPLO3:
-		message: 'Diplomacy is a matter of exchanging power with words. We hold a destructive, semi-evident secret that the enemy king keeps, but in it’s truth, our country is at fault. We could reveal it in truth, or we could fabricate the truth to reflect another rival being at fault. Unfortunately the truth is slowly becoming uncovered, and our statement will work only until the war is over. '
+		message: (user) ->
+			user.sendImage story.DIPLO3.image?()
+			'Diplomacy is a matter of exchanging power with words. We hold a destructive, semi-evident secret that the enemy king keeps, but in it’s truth, our country is at fault. We could reveal it in truth, or we could fabricate the truth to reflect another rival being at fault. Unfortunately the truth is slowly becoming uncovered, and our statement will work only until the war is over. '
+		image: randomizer imageGlob 'secret'
 		options: [
 			{
 				text: 'Lie'
@@ -346,7 +391,9 @@ story =
 		]
 
 	NARRATOR1:
-		message: 'The final bullet shot, the last building pillaged, and the end to 3 years of war, your decisions amount to one final outcome. Your advisors pile into the room to notify you of the results.'
+		message: (user) ->
+			user.sendImage story.NARRATOR1.image?()
+			'The final bullet shot, the last building pillaged, and the end to 3 years of war, your decisions amount to one final outcome. Your advisors pile into the room to notify you of the results.'
 		options: [
 			{
 				text: 'Results'
@@ -357,11 +404,20 @@ story =
 		]
 
 	RESULTS:
+		imageBad: randomizer imageGlob 'lose'
+		imageGood: randomizer imageGlob 'mehWin'
+		imageBest: randomizer imageGlob 'win'
 		action: (user) ->
 			finalMessage = switch
-				when -5 <= user.warscore < 5 then 'Your military was crushed immediately. Your defensive positions failed. Your support fell through. What’s left is only a remnant.'
-				when 5 <= user.warscore < 10 then 'Eh you were alright' # TODO
-				when 10 <= user.warscore then 'Wow you were actually good' # TODO
+				when -5 <= user.warscore < 5
+					user.sendImage story.RESULTS.imageBad()
+					'Your military was crushed immediately. Your defensive positions failed. Your support fell through. What’s left is only a remnant.'
+				when 5 <= user.warscore < 10
+					user.sendImage story.RESULTS.imageGood()
+					'You barely win the war. Between your allies, strategies, and economy you capably defeat the enemy and preserve your way of life, for now.' # TODO
+				when 10 <= user.warscore
+					user.sendImage story.RESULTS.imageBest()
+					'You outwit the enemy at nearly every engagement, and your shocking victory spreads across the kingdoms.' # TODO
 			user.sendText finalMessage
 			user.sendText "Your final score was #{user.warscore}"
 			return 'RESTART'
@@ -371,7 +427,7 @@ story =
 		options: [
 			{
 				text: 'Restart'
-				action: 'PROLOGUE'
+				action: 'START'
 			}
 		]
 
