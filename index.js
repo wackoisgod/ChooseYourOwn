@@ -21,6 +21,7 @@ const stateTree = {
 			state.inventory = {
 				key: false
 			};
+
 			state.warscore = 0;
 			state.mil1 = 0;
 			state.mil2 = 0;
@@ -47,14 +48,14 @@ const stateTree = {
 	PROLOGUE: {
 		message: 'THIS IS AN OUTRAGE. We are now at war with one of our closest allies and nobody here has any idea what they\'re doing! Your majesty, your court cannot decide an appropriate course of action, so you must absolve all doubt and choose a path for the future of our country.', // Advisors are arguing with each other
 		options: [
-			{text: 'Choose', payload: 'MIL1'}
+			{text: 'Choose', action: 'MIL1'}
 		]
 	},
 	MIL1: {
 		message: 'The enemy severely outnumbers us, and our forces are not yet primed for battle. We can regain composure by the time the enemy reaches us, but there is an opportunity for our ally, Denmark, to take the enemy capital while we hold off the bulk of the enemy forces. Is that a risk you’re willing to take?', // Military states his case and presents options
 		options: [
-			{text: 'Yes', payload: 'MIL2YES'},
-			{text: 'No', payload: 'MIL2NO'}
+			{text: 'Yes', action: 'MIL2YES'},
+			{text: 'No', action: 'MIL2NO'}
 		]
 	},
 	MIL2YES: {
@@ -74,9 +75,9 @@ const stateTree = {
 	MIL2: {
 		message: 'When the enemy reaches us, should we defend the outermost provinces, the river surrounding our lands, or the castle keep? We may lose land and stability based on this decision.', // Military states his case and presents options
 		options: [
-			{text: 'Provinces', payload: 'MIL3PROVINCES'},
-			{text: 'River', payload: 'MIL3RIVER'},
-			{text: 'Keep', payload: 'MIL3KEEP'}
+			{text: 'Provinces', action: 'MIL3PROVINCES'},
+			{text: 'River', action: 'MIL3RIVER'},
+			{text: 'Keep', action: 'MIL3KEEP'}
 		]
 	},
 	MIL3PROVINCES: {
@@ -103,9 +104,9 @@ const stateTree = {
 	MIL3: {
 		message: 'Should we win the initial battle, do we attack the enemy’s naval trade port, the ruling king’s fortress, or spread out and control the commoners?',
 		options: [
-			{text: 'Port', payload: 'PEOPLE1PORT'},
-			{text: 'Commoners', payload: 'PEOPLE1COMMONERS'},
-			{text: 'Fortress', payload: 'PEOPLE1FORTRESS'}
+			{text: 'Port', action: 'PEOPLE1PORT'},
+			{text: 'Commoners', action: 'PEOPLE1COMMONERS'},
+			{text: 'Fortress', action: 'PEOPLE1FORTRESS'}
 		]
 	},
 	PEOPLE1PORT: {
@@ -132,79 +133,79 @@ const stateTree = {
 	PEOPLE1: {
 		message: 'The door opens...',
 		options: [
-			{text: 'Restart', payload: 'START'}
+			{text: 'Restart', action: 'START'}
 		]
 	},
 	PEOPLE2: {
 		message: 'The door opens...',
 		options: [
-			{text: 'Restart', payload: 'START'}
+			{text: 'Restart', action: 'START'}
 		]
 	},
 	PEOPLE3: {
 		message: 'The door opens...',
 		options: [
-			{text: 'Restart', payload: 'START'}
+			{text: 'Restart', action: 'START'}
 		]
 	},
 	ECON1: {
 		message: 'The door opens...',
 		options: [
-			{text: 'Restart', payload: 'START'}
+			{text: 'Restart', action: 'START'}
 		]
 	},
 	ECON2: {
 		message: 'The door opens...',
 		options: [
-			{text: 'Restart', payload: 'START'}
+			{text: 'Restart', action: 'START'}
 		]
 	},
 	ECON3: {
 		message: 'The door opens...',
 		options: [
-			{text: 'Restart', payload: 'START'}
+			{text: 'Restart', action: 'START'}
 		]
 	},
 	SCI1: {
 		message: 'The door opens...',
 		options: [
-			{text: 'Restart', payload: 'START'}
+			{text: 'Restart', action: 'START'}
 		]
 	},
 	SCI2: {
 		message: 'The door opens...',
 		options: [
-			{text: 'Restart', payload: 'START'}
+			{text: 'Restart', action: 'START'}
 		]
 	},
 	SCI3: {
 		message: 'The door opens...',
 		options: [
-			{text: 'Restart', payload: 'START'}
+			{text: 'Restart', action: 'START'}
 		]
 	},
 	DIPLO1: {
 		message: 'The door opens...',
 		options: [
-			{text: 'Restart', payload: 'START'}
+			{text: 'Restart', action: 'START'}
 		]
 	},
 	DIPLO2: {
 		message: 'The door opens...',
 		options: [
-			{text: 'Restart', payload: 'START'}
+			{text: 'Restart', action: 'START'}
 		]
 	},
 	DIPLO3: {
 		message: 'The door opens...',
 		options: [
-			{text: 'Restart', payload: 'START'}
+			{text: 'Restart', action: 'START'}
 		]
 	},
 	NARRATOR1: {
 		message: 'The door opens...',
 		options: [
-			{text: 'Restart', payload: 'START'}
+			{text: 'Restart', action: 'START'}
 		]
 	}
 };
@@ -222,15 +223,15 @@ function validateStateEntry(name, previous) {
 function sendState(senderId) {
 	const buttons = [];
 	const userState = states[senderId];
-	let stateEntry = stateTree[userState.state];
+	let stateEntry = stateTree[userState._state];
 
 	generateNonce(senderId);
 
 	let nextAction = null;
 	while (stateEntry.action && (nextAction = stateEntry.action(userState))) {
-		nextAction = validateStateEntry(nextAction, userState.state);
+		nextAction = validateStateEntry(nextAction, userState._state);
 		stateEntry = stateTree[nextAction];
-		userState.state = nextAction;
+		userState._state = nextAction;
 	}
 
 	for (const option of stateEntry.options) {
@@ -240,7 +241,7 @@ function sendState(senderId) {
 		}
 
 		if (enable) {
-			const noncedPayload = applyNonce(senderId, option.payload);
+			const noncedPayload = applyNonce(senderId, option.action);
 			const button = Bot.createPostbackButton(option.text, noncedPayload);
 			buttons.push(button);
 		}
@@ -306,8 +307,8 @@ function consumeNonce(senderId, payload) {
 function initializeUser(senderId) {
 	// Initialize a 'new' user's state
 	states[senderId] = {
-		id: senderId,
-		state: 'START'
+		_id: senderId,
+		_state: 'START'
 	};
 
 	sendState(senderId);
@@ -342,12 +343,12 @@ Bot.on('postback', event => {
 
 	if (!(payload in stateTree)) {
 		sendState(senderId);
-		console.warn(`${chalk.yellow.bold('WARNING:')} invalid payload received from user ${chalk.magenta(senderId)}: ${chalk.bold(payload)} (currently at state ${chalk.bold(userState.state)})`);
+		console.warn(`${chalk.yellow.bold('WARNING:')} invalid payload received from user ${chalk.magenta(senderId)}: ${chalk.bold(payload)} (currently at state ${chalk.bold(userState._state)})`);
 		Bot.sendText(senderId, 'Oh no! There was a problem processing that selection. I\'ve notified my creators.');
 		return;
 	}
 
-	userState.state = payload;
+	userState._state = payload;
 
 	sendState(senderId);
 });
