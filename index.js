@@ -47,81 +47,78 @@ const story = {
 	MIL1: {
 		message: 'The enemy severely outnumbers us, and our forces are not yet primed for battle. We can regain composure by the time the enemy reaches us, but there is an opportunity for our ally, Denmark, to take the enemy capital while we hold off the bulk of the enemy forces. Is that a risk you’re willing to take?', // Military states his case and presents options
 		options: [
-			{text: 'Yes', action: 'MIL2YES'},
-			{text: 'No', action: 'MIL2NO'}
+			{
+				text: 'Yes',
+				action: user => {
+					user.warscore += 1;
+					user.mil1 = 0;
+					return 'MIL2';
+				}
+			},
+			{
+				text: 'No',
+				action: user => {
+					user.mil1 = 1;
+					return 'MIL2';
+				}
+			}
 		]
-	},
-	MIL2YES: {
-		action: user => {
-			user.warscore += 1;
-			user.mil1 = 0;
-			return 'MIL2';
-		}
-	},
-	MIL2NO: {
-		action: user => {
-			user.warscore += 0;
-			user.mil1 = 1;
-			return 'MIL2';
-		}
 	},
 	MIL2: {
 		message: 'When the enemy reaches us, should we defend the outermost provinces, the river surrounding our lands, or the castle keep? We may lose land and stability based on this decision.', // Military states his case and presents options
 		options: [
-			{text: 'Provinces', action: 'MIL3PROVINCES'},
-			{text: 'River', action: 'MIL3RIVER'},
-			{text: 'Keep', action: 'MIL3KEEP'}
+			{
+				text: 'Provinces',
+				action: user => {
+					user.mil2 = 0;
+					return 'MIL3';
+				}
+			},
+			{
+				text: 'River',
+				action: user => {
+					user.warscore += 1;
+					user.mil2 = 1;
+					return 'MIL3';
+				}
+			},
+			{
+				text: 'Keep',
+				action: user => {
+					user.warscore -= 1;
+					user.mil2 = 2;
+					return 'MIL3';
+				}
+			}
 		]
-	},
-	MIL3PROVINCES: {
-		action: user => {
-			user.warscore += 0;
-			user.mil2 = 0;
-			return 'MIL3';
-		}
-	},
-	MIL3RIVER: {
-		action: user => {
-			user.warscore += 1;
-			user.mil2 = 1;
-			return 'MIL3';
-		}
-	},
-	MIL3KEEP: {
-		action: user => {
-			user.warscore += -1;
-			user.mil2 = 2;
-			return 'MIL3';
-		}
 	},
 	MIL3: {
 		message: 'Should we win the initial battle, do we attack the enemy’s naval trade port, the ruling king’s fortress, or spread out and control the commoners?',
 		options: [
-			{text: 'Port', action: 'PEOPLE1PORT'},
-			{text: 'Commoners', action: 'PEOPLE1COMMONERS'},
-			{text: 'Fortress', action: 'PEOPLE1FORTRESS'}
+			{
+				text: 'Port',
+				action: user => {
+					user.warscore += 1;
+					user.mil3 = 0;
+					return 'PEOPLE1';
+				}
+			},
+			{
+				text: 'Commoners',
+				action: user => {
+					user.mil3 = 1;
+					return 'PEOPLE1';
+				}
+			},
+			{
+				text: 'Fortress',
+				action: user => {
+					user.warscore -= 1;
+					user.mil3 = 2;
+					return 'PEOPLE1';
+				}
+			}
 		]
-	},
-	PEOPLE1PORT: {
-		action: user => {
-			user.warscore += 1;
-			user.mil3 = 0;
-			return 'PEOPLE1';
-		}
-	},
-	PEOPLE1COMMONERS: {
-		action: user => {
-			user.warscore += 0;
-			user.mil3 = 1;
-			return 'PEOPLE1';
-		}
-	},
-	PEOPLE1FORTRESS: {
-		action: user => {
-			user.warscore += -1;
-			user.mil3 = 2;
-			return 'PEOPLE1';
-		}
 	},
 	PEOPLE1: {
 		message: 'The door opens...',
