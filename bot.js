@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const Bot = require('fb-local-chat-bot');
 const chalk = require('chalk');
 const express = require('express');
+const morgan = require('morgan');
 
 const app = express();
 
@@ -197,6 +198,10 @@ Bot.on('postback', event => {
 	user.execute(action);
 });
 
+morgan.token('fb-text', req => req.body.message || '');
+morgan.token('fb-payload', req => req.body.payload || '');
+morgan.token('fb-senderid', req => req.body.senderID || '');
+
 function initialize(config, story, beginningState) {
 	startState = beginningState || 'START';
 	storyTree = story || storyTree;
@@ -213,6 +218,24 @@ function initialize(config, story, beginningState) {
 
 	app.use(bodyParser.json());
 	app.use(bodyParser.urlencoded({extended: true}));
+
+	app.use(morgan([
+		':date[clf]:',
+		chalk.magenta.dim(':remote-addr'),
+		chalk.bold(':method'),
+		':url',
+		chalk.cyan(':status'),
+		'- :response-time ms',
+		'-',
+		chalk.green(':fb-senderid'),
+		'-',
+		chalk.green(':fb-payload'),
+		'-',
+		chalk.green(':fb-text'),
+		'- :url',
+		chalk.dim('(:user-agent)')
+	].join(' ')));
+
 	app.use('/webhook', Bot.router());
 
 	const port = process.env.PORT || config.port || 5000;
