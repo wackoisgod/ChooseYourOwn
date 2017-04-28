@@ -219,6 +219,10 @@ function initialize(config, story, beginningState) {
 	app.use(bodyParser.json());
 	app.use(bodyParser.urlencoded({extended: true}));
 
+	app.get('/_ah/health', (req, res) => {
+		res.send('ok');
+	});
+
 	app.use(morgan([
 		':date[clf]:',
 		chalk.magenta.dim(':remote-addr'),
