@@ -1,5 +1,8 @@
 'use strict';
 
+const fs = require('fs');
+const https = require('https');
+
 const bodyParser = require('body-parser');
 const Bot = require('fb-local-chat-bot');
 const chalk = require('chalk');
@@ -242,8 +245,13 @@ function initialize(config, story, beginningState) {
 
 	app.use('/webhook', Bot.router());
 
+	const httpsServer = https.createServer({
+		key: fs.readFileSync(config.privateKey),
+		cert: fs.readFileSync(config.certificate)
+	}, app);
+
 	const port = process.env.PORT || config.port || 5000;
-	app.listen(port);
+	httpsServer.listen(port);
 	log.info('listening on port', chalk.bold(port));
 
 	log.info('ready!');

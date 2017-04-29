@@ -3,6 +3,9 @@
 /config.json
 /index.js
 /index.js.map
+*.key
+*.csr
+*.crt
 
 ### Node ###
 # Logs

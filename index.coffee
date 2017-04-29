@@ -14,7 +14,7 @@ imageGlob = (folder) ->
 	baseUrl = url.parse config.serverURL
 	if config.debug
 		delete baseUrl.host
-		baseUrl.protocol = 'http:'
+		baseUrl.protocol = 'https:'
 		baseUrl.hostname = 'localhost'
 		baseUrl.port = config.port
 
