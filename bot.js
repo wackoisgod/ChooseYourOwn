@@ -12,7 +12,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 
 const app = express();
-app.use(helmet());
+//app.use(helmet());
 
 const states = {};
 
@@ -247,15 +247,17 @@ function initialize(config, story, beginningState) {
 	].join(' ')));
 
 	app.use('/webhook', Bot.router());
-	app.use('/.well-known', express.static(path.join(__dirname, 'static/.well-known')));  // certbot challenge URL
+	app.use('/.well-known', express.static(path.join(__dirname, 'static/well-known')));  // Certbot challenge URL
 
-	const httpsServer = https.createServer({
-		key: fs.readFileSync(config.privateKey),
-		cert: fs.readFileSync(config.certificate)
-	}, app);
+	const server = config.https
+		? https.createServer({
+			key: fs.readFileSync(config.privateKey),
+			cert: fs.readFileSync(config.certificate)
+		}, app)
+		: app;
 
 	const port = process.env.PORT || config.port || 5000;
-	httpsServer.listen(port);
+	server.listen(port);
 	log.info('listening on port', chalk.bold(port));
 
 	log.info('ready!');
