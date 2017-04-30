@@ -21,6 +21,7 @@
     "express": "^4.15.2",
     "fb-local-chat-bot": "github:qix-/fb-local-chat-bot",
     "glob": "^7.1.1",
+    "helmet": "^3.5.0",
     "morgan": "^1.8.1"
   },
   "xo": {
