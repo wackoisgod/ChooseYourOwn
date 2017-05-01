@@ -1,11 +1,18 @@
 'use strict';
 
+const fs = require('fs');
+const https = require('https');
+const path = require('path');
+
 const bodyParser = require('body-parser');
 const Bot = require('fb-local-chat-bot');
 const chalk = require('chalk');
 const express = require('express');
+const helmet = require('helmet');
+const morgan = require('morgan');
 
 const app = express();
+//app.use(helmet());
 
 const states = {};
 
@@ -197,6 +204,10 @@ Bot.on('postback', event => {
 	user.execute(action);
 });
 
+morgan.token('fb-text', req => req.body.message || '');
+morgan.token('fb-payload', req => req.body.payload || '');
+morgan.token('fb-senderid', req => req.body.senderID || '');
+
 function initialize(config, story, beginningState) {
 	startState = beginningState || 'START';
 	storyTree = story || storyTree;
@@ -213,10 +224,40 @@ function initialize(config, story, beginningState) {
 
 	app.use(bodyParser.json());
 	app.use(bodyParser.urlencoded({extended: true}));
+
+	app.get('/_ah/health', (req, res) => {
+		res.send('ok');
+	});
+
+	app.use(morgan([
+		':date[clf]:',
+		chalk.magenta.dim(':remote-addr'),
+		chalk.bold(':method'),
+		':url',
+		chalk.cyan(':status'),
+		'- :response-time ms',
+		'-',
+		chalk.green(':fb-senderid'),
+		'-',
+		chalk.green(':fb-payload'),
+		'-',
+		chalk.green(':fb-text'),
+		'- :url',
+		chalk.dim('(:user-agent)')
+	].join(' ')));
+
 	app.use('/webhook', Bot.router());
+	app.use('/.well-known', express.static(path.join(__dirname, 'static/well-known')));  // Certbot challenge URL
+
+	const server = config.https
+		? https.createServer({
+			key: fs.readFileSync(config.privateKey),
+			cert: fs.readFileSync(config.certificate)
+		}, app)
+		: app;
 
 	const port = process.env.PORT || config.port || 5000;
-	app.listen(port);
+	server.listen(port);
 	log.info('listening on port', chalk.bold(port));
 
 	log.info('ready!');

@@ -19,8 +19,10 @@
     "chalk": "^1.1.3",
     "coffee-script": "^1.12.5",
     "express": "^4.15.2",
-    "fb-local-chat-bot": "^0.1.42",
-    "glob": "^7.1.1"
+    "fb-local-chat-bot": "github:qix-/fb-local-chat-bot",
+    "glob": "^7.1.1",
+    "helmet": "^3.5.0",
+    "morgan": "^1.8.1"
   },
   "xo": {
     "rules": {
