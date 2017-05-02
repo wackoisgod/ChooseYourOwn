@@ -51,6 +51,7 @@ class User {
 
 	sendImage(uri) {
 		if (uri) {
+
 			Bot.sendImage(this._id, uri);
 		}
 	}
@@ -81,6 +82,7 @@ class User {
 
 	execute(...actions) {
 		for (const rootAction of actions) {
+			log.error(actions);
 			let nextAction = rootAction;
 			while (nextAction) {
 				const action = nextAction;
