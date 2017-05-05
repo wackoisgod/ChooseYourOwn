@@ -5,9 +5,7 @@
   "description": "Timeshock Games' Adventure Bot",
   "main": "index.js",
   "scripts": {
-    "start": "coffee index.coffee",
-    "test": "xo",
-    "fix": "xo --fix"
+    "start": "coffee index.coffee"
   },
   "author": "Jonah Sanville",
   "license": "ISC",
