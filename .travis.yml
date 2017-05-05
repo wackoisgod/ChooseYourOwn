@@ -16,6 +16,6 @@ after_success:
   - if [ ! -z "$TRAVIS_TAG" ]; then 
       docker tag $DOCKER_IMAGE_NAME:latest $DOCKER_IMAGE_NAME:$TRAVIS_TAG; 
    fi 
-  - if [ "$TRAVIS_BRANCH" == "master" ]; then 
+  - if [ "$TRAVIS_BRANCH" == "Dev" ]; then 
       docker push $DOCKER_IMAGE_NAME; 
    fi
