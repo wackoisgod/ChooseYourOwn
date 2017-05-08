@@ -264,7 +264,7 @@ function initialize(config, story, beginningState) {
 		}, app)
 		: app;
 
-	const port = process.env.PORT || config.port || 5000;
+	const port = process.env.PORT || config.port || 5000; 
 	server.listen(port);
 	log.info('listening on port', chalk.bold(port));
 
