@@ -249,8 +249,13 @@ function initialize(config, story, beginningState) {
 	].join(' ')));
 
 	app.use('/webhook', Bot.router());
-	app.use('/test', express.static(path.join(__dirname, 'images')));
-	app.use('/.well-known', express.static(path.join(__dirname, 'static/well-known')));  // Certbot challenge URL
+	//app.use('/.well-known', express.static(path.join(__dirname, 'static/well-known')));  // Certbot challenge URL
+
+	if (process.env.LE_URL && process.env.LE_CONTENT) {
+  		app.use(process.env.LE_URL, function(req, res) {
+    		return res.send(process.env.LE_CONTENT)
+  		});
+	}
 
 	const server = config.https
 		? https.createServer({
